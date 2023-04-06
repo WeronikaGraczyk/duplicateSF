@@ -1,4 +1,5 @@
 public with sharing class DuplicateController {
+    @AuraEnabled(Cacheable = true)
     public static List<SObject> duplicateObject(SObject someObject){
         List<SObject> results = new List<SObject>(someObject);
 
