@@ -1,6 +1,7 @@
 public with sharing class DuplicateController {
     @AuraEnabled(Cacheable = true)
     public static List<SObject> findDuplicates(String idFromPage) {
+        System.debug('jebac sf');
         Id recordId = Id.valueOf(idFromPage);
         String objName = recordId.getSObjectType().getDescribe().getName();
         List<DuplicateRecordSet> duplicateRecordSet = getRecordSetList(recordId);

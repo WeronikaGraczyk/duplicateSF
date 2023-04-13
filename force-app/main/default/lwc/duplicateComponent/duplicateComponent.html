@@ -1,0 +1,18 @@
+<template>
+  <template if:false={duplicatesToShow}>
+    <div class="slds-align_absolute-center slds-scrollable_y">No duplicates available</div>
+  </template>
+  <template if:true={duplicatesToShow}>
+    <div>
+      <lightning-button label="Duplicates" onclick={loadRecord}></lightning-button>
+      <template if:true={duplicateObjectsList.data}>
+        <lightning-datatable
+            key-field="Id"
+            columns={columns}
+            data={rows}
+        ></lightning-datatable>
+    </template>
+    </div>
+  </template>
+</template>
+  
