@@ -16,8 +16,10 @@ export default class DuplicateComponent extends LightningElement {
     duplicates;
 
     get columns() {
+        console.log('columns '+this.duplicateObjectsList.data.length);
         if (this.duplicateObjectsList.data && this.duplicateObjectsList.data.length > 0) {
             // Use the first record in the list to get the field names
+            console.log('columns1 '+this.duplicateObjectsList.data.length);
             return Object.keys(this.duplicateObjectsList.data[0]).map(field => {
                 return {
                     label: field,
@@ -42,10 +44,10 @@ export default class DuplicateComponent extends LightningElement {
         })
         this.dispatchEvent(toast);
         this.handleReset(); 
-    }
+    } 
 
     get duplicatesToShow() {
-        console.log('aaaaa'+this.duplicateObjectsList.data);
-        return this.duplicateObjectsList !== undefined && this.duplicateObjectsList != null;
-    }//&& this.duplicateObjectsList.length > 0
+        console.log('duplicate to show ',this.duplicateObjectsList);
+        return this.duplicateObjectsList !== undefined && this.duplicateObjectsList != null && this.duplicateObjectsList.data && this.duplicateObjectsList.data.length > 0;
+    }//
 }

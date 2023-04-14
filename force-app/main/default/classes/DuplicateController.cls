@@ -8,19 +8,27 @@ public with sharing class DuplicateController {
 
         List<DuplicateRecordItem> itemsList = [SELECT recordId FROM DuplicateRecordItem WHERE DuplicateRecordSetId =: duplicateRecordSet];
 
-        List<SObject> records = Database.query(ObjectFieldsListQuery(objName, recordId));
-
+        List<String> recordIds = new List<String>();
+        for(DuplicateRecordItem item : itemsList){
+            recordIds.add(item.recordId);
+        }
+        String query = ObjectFieldsListQuery(objName, recordIds);
+        // String g=query.substring(500);
+        // System.debug(g);
+        List<SObject> records = Database.query(query);
+        System.debug(records);
         return records;
     }
 
-    private static String ObjectFieldsListQuery(String objName, Id recordId){
-        String query = 'SELECT ';
-        Map<String, Schema.SObjectField> fields = Schema.getGlobalDescribe().get(objName).getDescribe().fields.getMap();
-        for(String field : fields.keySet()){
-            query += field + ', ';
-        }
-        query = query.substring(0, query.length() - 2);
-        query += ' FROM ' + objName + ' WHERE Id = \'' + recordId + '\'';
+    private static String ObjectFieldsListQuery(String objName){
+        String query = 'SELECT id, name';
+        // Map<String, Schema.SObjectField> fields = Schema.getGlobalDescribe().get(objName).getDescribe().fields.getMap();
+        // for(String field : fields.keySet()){
+        //         query += field + ',';
+        // }
+        // query = query.substring(0, query.length() - 2);
+        query += ' FROM ' + objName + ' WHERE Id IN :recordIds';
+        System.debug(query);
         return query;
     }
     
