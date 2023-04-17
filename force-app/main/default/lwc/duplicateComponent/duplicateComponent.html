@@ -2,15 +2,28 @@
   
   <template if:true={duplicatesToShow}>
     <div>
-      <lightning-button label="Duplicates" onclick={loadRecord}></lightning-button>
-      <template if:true={duplicateObjectsList.data}>
-        <lightning-datatable
-            key-field="Id"
-            columns={columns}
-            data={rows}
-        ></lightning-datatable>
-    </template>
+        <table class="slds-table slds-table_bordered slds-table_cell-buffer">
+          <thead>
+              <tr>
+                  <th scope="col">Field Name</th>
+                  <template for:each={objects} for:item="object">
+                      <th key={object.Id} scope="col">{object.Name}</th>
+                  </template>
+              </tr>
+          </thead>
+          <tbody>
+              <template for:each={fields} for:item="field">
+                  <tr key={field}>
+                      <th scope="row">{field}</th>
+                      <template for:each={objects} for:item="object">
+                           <td key={object.Id}>{object}</td>
+                      </template>
+                  </tr>
+              </template>
+          </tbody>
+      </table>
     </div>
+    <lightning-button label="Duplicates" onclick={loadRecord}></lightning-button>
   </template>
   <template if:false={duplicatesToShow}>
     <div class="slds-align_absolute-center slds-scrollable_y">No duplicates available</div>

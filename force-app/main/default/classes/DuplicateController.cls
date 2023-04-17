@@ -12,11 +12,10 @@ public with sharing class DuplicateController {
         for(DuplicateRecordItem item : itemsList){
             recordIds.add(item.recordId);
         }
-        String query = ObjectFieldsListQuery(objName, recordIds);
+        String query = ObjectFieldsListQuery(objName);
         // String g=query.substring(500);
         // System.debug(g);
         List<SObject> records = Database.query(query);
-        System.debug(records);
         return records;
     }
 
@@ -28,7 +27,6 @@ public with sharing class DuplicateController {
         // }
         // query = query.substring(0, query.length() - 2);
         query += ' FROM ' + objName + ' WHERE Id IN :recordIds';
-        System.debug(query);
         return query;
     }
     
