@@ -1,0 +1,8 @@
+.slds-table_col-bordered th {
+  border-bottom: 1px solid #d8dde6;
+  padding: 0.75rem 0.5rem;
+}
+
+.slds-table_col-bordered td {
+  padding: 0.75rem 0.5rem;
+}

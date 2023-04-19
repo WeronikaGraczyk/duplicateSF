@@ -7,6 +7,6 @@ export default class ObjectTd extends LightningElement {
     field;
     value;
     connectedCallback() {
-        this.value = `<td>${this.object[this.field]}</td>`;
+        this.value = this.object[this.field];
     }
 }
