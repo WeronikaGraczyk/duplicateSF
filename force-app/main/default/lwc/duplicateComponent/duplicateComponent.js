@@ -10,6 +10,7 @@ export default class DuplicateComponent extends LightningElement {
     objects;
     fields;
 
+    @track showModal = false;
 
     @wire(findDuplicates, {idFromPage: '$recordId'})
     wiredDuplicates({ error, data }) {
@@ -32,5 +33,12 @@ export default class DuplicateComponent extends LightningElement {
 
     get duplicatesToShow() {
         return this.objects !== undefined && this.objects != null;
+    }
+    openModal() {
+        this.showModal = true;
+    }
+
+    closeModal() {
+        this.showModal = false;
     }
 }

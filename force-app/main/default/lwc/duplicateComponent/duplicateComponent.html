@@ -25,7 +25,24 @@
       </table>
     </div>
     <div class="slds-text-align_right slds-m-top_medium">
-      <lightning-button label="Load Records" onclick={loadRecord}></lightning-button>
+      <lightning-button label="Open Modal" onclick={openModal}></lightning-button>
+
+      <template if:true={showModal}>
+        <div class="slds-modal slds-fade-in-open">
+          <div class="slds-modal__container">
+            <div class="slds-modal__header">
+              <h2 class="slds-text-heading_medium">Duplicate Records</h2>
+              <button class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse" title="Close" onclick={closeModal}>
+                <lightning-icon icon-name="utility:close" size="small"></lightning-icon>
+              </button>
+              </div>
+              <div class="slds-modal__content slds-p-around_medium">
+                <p>There will be duplicates</p>
+              </div>
+            </div>
+          </div>
+        <div class="slds-backdrop slds-backdrop_open"></div>
+      </template>
     </div>
   </template>
   <template if:false={duplicatesToShow}>
