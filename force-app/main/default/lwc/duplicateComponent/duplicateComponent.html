@@ -35,12 +35,27 @@
               <button class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse" title="Close" onclick={closeModal}>
                 <lightning-icon icon-name="utility:close" size="small"></lightning-icon>
               </button>
-              </div>
-              <div class="slds-modal__content slds-p-around_medium">
-                <p>There will be duplicates</p>
-              </div>
+            </div>
+            <div class="slds-modal__content slds-p-around_medium">
+              <table class="slds-table slds-table_bordered slds-table_cell-buffer slds-table_col-bordered">
+                <tbody>
+                  <template for:each={fields} for:item="field">
+                    <tr key={field}>
+                      <th scope="row" class="slds-cell-wrap">{field}</th>
+                      <template for:each={objects} for:item="object">
+                        <td key={object.Id} class="slds-cell-wrap">
+                          <input type="checkbox" name="selectedObjects" checked={object.isSelected} onchange={handleCheckboxChange} data-field={field} data-object-id={object.Id} />
+                          <c-object-td object={object} field={field}></c-object-td>
+                        </td>
+                      </template>
+                    </tr>
+                  </template>
+                </tbody>
+              </table>
+              <lightning-button variant="brand" label="Merge" onclick={handleMergeClick}></lightning-button>
             </div>
           </div>
+        </div>
         <div class="slds-backdrop slds-backdrop_open"></div>
       </template>
     </div>

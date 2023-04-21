@@ -39,4 +39,8 @@ public with sharing class DuplicateController {
         }
         return [SELECT id, name FROM DuplicateRecordSet WHERE id IN :duplicateRecordSetIds];
     }
+    @AuraEnabled
+    public static void mergeDuplicates( Object recordsToMerge){
+        System.debug('dfdsfsf');
+    }
 }
