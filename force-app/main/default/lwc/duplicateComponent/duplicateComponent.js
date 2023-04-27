@@ -8,6 +8,7 @@ export default class DuplicateComponent extends LightningElement {
     error;
     objects;
     fields;
+    
 
     @track showModal = false;
     @track selectedObject = null;
@@ -17,16 +18,23 @@ export default class DuplicateComponent extends LightningElement {
     @wire(findDuplicates, { idFromPage: '$recordId' })
     wiredDuplicates({ error, data }) {
       if (data && data.length > 0) {
-        console.log(data);
-         this.objects = data.map(obj => ({ ...obj}));
-          this.objects = this.objects.filter(field => field !== 'Id');
+        const myArray = ['Id','CreatedDate', 'CreatedById', 'LastModifiedDate', 'LastModifiedById', 'SystemModstamp', 'LastViewedDate', 'LastReferencedDate', 'CleanStatus', 'PhotoUrl', 'OwnerId'];
+        console.log(myArray);
+        this.objects = data.map(obj => ({ ...obj}));
+        this.objects = this.objects.map(field => {
+          return Object.keys(field)
+             .filter(key => !myArray.includes(key))
+             .reduce((obj, key) => {
+              obj[key] = field[key];
+              return obj;
+            }, {});
+        });
+        this.idsList = this.objects.map(obj => obj.Id);
 
-          this.idsList = this.objects.map(obj => obj.Id);
+        this.fields = Object.keys(data[0]);
+        this.fields = this.fields.filter(field => !myArray.includes(field));
 
-          this.fields = Object.keys(data[0]);
-          this.fields = this.fields.filter(field => field !== 'Id');
-
-          this.selectedFields = this.fields.map(field => ({ fieldName: field, isSelected: false, value: "" })); 
+        this.selectedFields = this.fields.map(field => ({ fieldName: field, isSelected: false, value: "" })); 
       } else if (error) {
         console.error(error);
       }
