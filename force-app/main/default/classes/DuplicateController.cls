@@ -19,14 +19,15 @@ public with sharing class DuplicateController {
     }
 
     private static String ObjectFieldsListQuery(String objName){
-        String query = 'SELECT id, name';
-        // Map<String, Schema.SObjectField> fields = Schema.getGlobalDescribe().get(objName).getDescribe().fields.getMap();
-        // for(String field : fields.keySet()){
-        //         query += field + ',';
-        // }
-        // query = query.substring(0, query.length() - 2);
-        query += ' FROM ' + objName + ' WHERE Id IN :recordIds';
-        return query;
+        Schema.SObjectType objectType = Schema.getGlobalDescribe().get(objName);
+        Schema.DescribeSObjectResult objectDescribe = objectType.getDescribe();
+    
+        List<String> fieldNames = new List<String>();
+        for (Schema.SObjectField field : objectDescribe.fields.getMap().values()) {
+            fieldNames.add(field.getDescribe().getName());
+        }
+        
+        return 'SELECT ' + String.join(fieldNames, ',')+' FROM ' + objName + ' WHERE Id = :recordIds';
     }
     
     private static List<DuplicateRecordSet> getRecordSetList(String recordId){

@@ -9,15 +9,16 @@ export default class DuplicateComponent extends LightningElement {
     objects;
     fields;
 
-    @track showModal = true;
+    @track showModal = false;
     @track selectedObject = null;
     @track selectedFields = null;
     @track idsList;
 
     @wire(findDuplicates, { idFromPage: '$recordId' })
     wiredDuplicates({ error, data }) {
-      if (data) {
-          this.objects = data.map(obj => ({ ...obj}));
+      if (data && data.length > 0) {
+        console.log(data);
+         this.objects = data.map(obj => ({ ...obj}));
           this.objects = this.objects.filter(field => field !== 'Id');
 
           this.idsList = this.objects.map(obj => obj.Id);
@@ -25,7 +26,7 @@ export default class DuplicateComponent extends LightningElement {
           this.fields = Object.keys(data[0]);
           this.fields = this.fields.filter(field => field !== 'Id');
 
-          this.selectedFields = this.fields.map(field => ({ fieldName: field, isSelected: false, value: "" }));
+          this.selectedFields = this.fields.map(field => ({ fieldName: field, isSelected: false, value: "" })); 
       } else if (error) {
         console.error(error);
       }
@@ -86,7 +87,6 @@ export default class DuplicateComponent extends LightningElement {
     }
     
   handleMergeClick() {
-  //merge to controller
   this.selectedFields = this.selectedFields.filter(field => field.fieldName !== 'Id');
 
   const selectedFieldsJSON = JSON.stringify(this.selectedFields);
