@@ -31,9 +31,12 @@ export default class DuplicateComponent extends LightningElement {
         });
 
         this.fields = Object.keys(data[0]);
-        this.fields = this.fields.filter(field => !this.myArray.includes(field) &&  field != 'Id');
+        this.fields = this.fields.filter(field => !this.myArray.includes(field));
 
         this.selectedFields = this.fields.map(field => ({ fieldName: field, isSelected: false, value: "" })); 
+        
+        this.fields = this.fields.filter(field => field != 'Id');
+      
       } else if (error) {
         console.error(error);
       }
@@ -45,7 +48,6 @@ export default class DuplicateComponent extends LightningElement {
 
     openModal() {
       this.selectedObject = null;
-      this.selectedFields = [];
       this.showModal = true;
     }
 
@@ -53,29 +55,19 @@ export default class DuplicateComponent extends LightningElement {
       this.showModal = false;
     }
 
-    initializeSelectedFieldsList(){
-      if(this.selectedFields == null){
-        this.selectedFields = this.fields.map(field => ({ fieldName: field, isSelected: false, value: "" }));
-      }
-    }
-
-    
     handleCheckboxChange(event) {
       
       const fieldFromPage = event.target.dataset.field;
       const objectId = event.target.dataset.objectId;
-      const foundObjectValue = this.objects.find(object => object.Id == objectId);
-      const indexToUpdate = this.selectedFields.findIndex(item => item.fieldName === fieldFromPage);
-      // console.log(objectId);
-      // console.log(fieldFromPage);
-      // console.log(JSON.stringify(this.foundObjectValue, (key, value) => {
-      //   if (Array.isArray(value)) {
-      //     return [...value];
-      //   } else {
-      //     return value;
-      //   }
-      // }));
-      // console.log(indexToUpdate);
+      console.log(JSON.stringify(this.selectedFields, (key, value) => {
+        if (Array.isArray(value)) {
+          return [...value];
+        } else {
+          return value;
+        }
+      }));
+      const foundObjectValue = this.objectsForModal.find(object => object.Id == objectId);
+      const indexToUpdate = this.selectedFields.findIndex(item => item.fieldName == fieldFromPage);
 
       if (event.target.checked) {
         if (indexToUpdate !== -1) {
@@ -93,13 +85,7 @@ export default class DuplicateComponent extends LightningElement {
           this.selectedFields[indexToUpdate].value = "";
         }
       }
-      console.log(JSON.stringify(this.selectedFields, (key, value) => {
-        if (Array.isArray(value)) {
-          return [...value];
-        } else {
-          return value;
-        }
-      }));
+
     }
     
     handleChooseObjectChange(event){
@@ -108,44 +94,21 @@ export default class DuplicateComponent extends LightningElement {
     
       if (isChecked) {
         this.idsList.push(objectId);
+
       } else {
         const index = this.idsList.indexOf(objectId);
         if (index > -1) {
           this.idsList.splice(index, 1);
         }
       }
-      
-      this.objectsForModal = this.objects.filter(field => this.idsList.includes(field.id));
+      this.objectsForModal=[];
       this.objects.forEach((obj) => {
-        // console.log(JSON.stringify(obj, (key, value) => {
-        //   if (Array.isArray(value)) {
-        //     return [...value];
-        //   } else {
-        //     return value;
-        //   }
-        // }));
-        // console.log(obj.Id);
         if (this.idsList.includes(obj.Id)) {
           const copy = Object.assign({}, obj);
           this.objectsForModal.push(copy);
         }
       });
-    
-      console.log(JSON.stringify(this.objectsForModal, (key, value) => {
-        if (Array.isArray(value)) {
-          return [...value];
-        } else {
-          return value;
-        }
-      }));
-    console.log(JSON.stringify(this.idsList, (key, value) => {
-      if (Array.isArray(value)) {
-        return [...value];
-      } else {
-        return value;
-      }
-    }));
-  }
+    }
     
   handleMergeClick() {
   this.selectedFields = this.selectedFields.filter(field => field.fieldName !== 'Id');

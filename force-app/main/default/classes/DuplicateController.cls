@@ -44,7 +44,6 @@ public with sharing class DuplicateController {
     public static void mergeObject(String selectedFieldsJSON,List<Id> idsList) {
         String objName = idsList[0].getSObjectType().getDescribe().getName();
         List<ObjectField> objectFields = (List<ObjectField>) JSON.deserialize(selectedFieldsJSON, List<ObjectField>.class);
-        System.debug(objectFields);
         insertObject(objectFields, objName);
         deleteObjects(idsList, objName);
     }
@@ -52,8 +51,9 @@ public with sharing class DuplicateController {
     public static void insertObject(List<ObjectField> objectFields, String objName) {
         SObject newObject = (SObject) Type.forName('Schema.' + objName).newInstance();
         for (ObjectField objecty : objectFields) {
-            newObject.put(String.valueOf(objecty.fieldName),  String.valueOf(objecty.value));
-            System.debug(newObject);
+            if(String.valueOf(objecty.value) != '' && String.valueOf(objecty.value) != null){
+               newObject.put(String.valueOf(objecty.fieldName),  String.valueOf(objecty.value)); 
+            }
         }
         Database.insert(newObject, true);
     }
