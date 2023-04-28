@@ -6,7 +6,10 @@
           <tr class="slds-text-title_caps">
             <th scope="col" class="slds-cell-wrap">Field Name</th>
             <template for:each={objects} for:item="object">
-              <th key={object.Id} scope="col" class="slds-cell-wrap">{object.Name}</th>
+              <th key={object.Id} scope="col" class="slds-cell-wrap">
+                <input type="checkbox" name="selectedObjects" onchange={handleChooseObjectChange} data-object-id={object.Id} />
+                {object.Name}
+              </th>
             </template>
           </tr>
         </thead>
@@ -42,7 +45,7 @@
                   <template for:each={fields} for:item="field">
                     <tr key={field}>
                       <th scope="row" class="slds-cell-wrap">{field}</th>
-                      <template for:each={objects} for:item="object">
+                      <template for:each={objectsForModal} for:item="object">
                         <td key={object.Id} class="slds-cell-wrap">
                           <input type="checkbox" name="selectedObjects" checked={object.isSelected} onchange={handleCheckboxChange} data-field={field} data-object-id={object.Id} />
                           <c-object-td object={object} field={field}></c-object-td>

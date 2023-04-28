@@ -7,36 +7,35 @@ export default class DuplicateComponent extends LightningElement {
     recordId;
     error;
     objects;
+    objectsForModal=[];
     fields;
-    
+    myArray = ['IsDeleted','CreatedDate', 'CreatedById', 'LastModifiedDate', 'LastModifiedById', 'SystemModstamp', 'LastViewedDate', 'LastReferencedDate', 'CleanStatus', 'PhotoUrl', 'OwnerId'];
+        
 
-    @track showModal = true;
+    @track showModal = false;
     @track selectedObject = null;
     @track selectedFields = null;
-    @track idsList;
+    @track idsList = [];
 
     @wire(findDuplicates, { idFromPage: '$recordId' })
     wiredDuplicates({ error, data }) {
       if (data && data.length > 0) {
-        const myArray = ['IsDeleted','CreatedDate', 'CreatedById', 'LastModifiedDate', 'LastModifiedById', 'SystemModstamp', 'LastViewedDate', 'LastReferencedDate', 'CleanStatus', 'PhotoUrl', 'OwnerId'];
         this.objects = data.map(obj => ({ ...obj}));
-        this.idsList = this.objects.map(obj => obj.Id);
-
         this.objects = this.objects.map(field => {
           return Object.keys(field)
-             .filter(key => !myArray.includes(key))
+             .filter(key => !this.myArray.includes(key))
              .reduce((obj, key) => {
               obj[key] = field[key];
               return obj;
             }, {});
         });
+
         this.fields = Object.keys(data[0]);
-        this.fields = this.fields.filter(field => !myArray.includes(field));
-        this.fields = this.fields.filter(field => field != 'Id');
+        this.fields = this.fields.filter(field => !this.myArray.includes(field) &&  field != 'Id');
 
         this.selectedFields = this.fields.map(field => ({ fieldName: field, isSelected: false, value: "" })); 
       } else if (error) {
-        console.error('dfsdfds',error);
+        console.error(error);
       }
     }
 
@@ -65,8 +64,18 @@ export default class DuplicateComponent extends LightningElement {
       
       const fieldFromPage = event.target.dataset.field;
       const objectId = event.target.dataset.objectId;
-      const foundObjectValue = this.objects.find(object => object.Id === objectId);
+      const foundObjectValue = this.objects.find(object => object.Id == objectId);
       const indexToUpdate = this.selectedFields.findIndex(item => item.fieldName === fieldFromPage);
+      // console.log(objectId);
+      // console.log(fieldFromPage);
+      // console.log(JSON.stringify(this.foundObjectValue, (key, value) => {
+      //   if (Array.isArray(value)) {
+      //     return [...value];
+      //   } else {
+      //     return value;
+      //   }
+      // }));
+      // console.log(indexToUpdate);
 
       if (event.target.checked) {
         if (indexToUpdate !== -1) {
@@ -84,7 +93,59 @@ export default class DuplicateComponent extends LightningElement {
           this.selectedFields[indexToUpdate].value = "";
         }
       }
+      console.log(JSON.stringify(this.selectedFields, (key, value) => {
+        if (Array.isArray(value)) {
+          return [...value];
+        } else {
+          return value;
+        }
+      }));
     }
+    
+    handleChooseObjectChange(event){
+      const isChecked = event.target.checked;
+      const objectId = event.target.dataset.objectId;
+    
+      if (isChecked) {
+        this.idsList.push(objectId);
+      } else {
+        const index = this.idsList.indexOf(objectId);
+        if (index > -1) {
+          this.idsList.splice(index, 1);
+        }
+      }
+      
+      this.objectsForModal = this.objects.filter(field => this.idsList.includes(field.id));
+      this.objects.forEach((obj) => {
+        // console.log(JSON.stringify(obj, (key, value) => {
+        //   if (Array.isArray(value)) {
+        //     return [...value];
+        //   } else {
+        //     return value;
+        //   }
+        // }));
+        // console.log(obj.Id);
+        if (this.idsList.includes(obj.Id)) {
+          const copy = Object.assign({}, obj);
+          this.objectsForModal.push(copy);
+        }
+      });
+    
+      console.log(JSON.stringify(this.objectsForModal, (key, value) => {
+        if (Array.isArray(value)) {
+          return [...value];
+        } else {
+          return value;
+        }
+      }));
+    console.log(JSON.stringify(this.idsList, (key, value) => {
+      if (Array.isArray(value)) {
+        return [...value];
+      } else {
+        return value;
+      }
+    }));
+  }
     
   handleMergeClick() {
   this.selectedFields = this.selectedFields.filter(field => field.fieldName !== 'Id');
