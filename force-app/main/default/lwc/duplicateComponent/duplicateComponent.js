@@ -10,7 +10,7 @@ export default class DuplicateComponent extends LightningElement {
     fields;
     
 
-    @track showModal = false;
+    @track showModal = true;
     @track selectedObject = null;
     @track selectedFields = null;
     @track idsList;
@@ -18,9 +18,10 @@ export default class DuplicateComponent extends LightningElement {
     @wire(findDuplicates, { idFromPage: '$recordId' })
     wiredDuplicates({ error, data }) {
       if (data && data.length > 0) {
-        const myArray = ['Id','CreatedDate', 'CreatedById', 'LastModifiedDate', 'LastModifiedById', 'SystemModstamp', 'LastViewedDate', 'LastReferencedDate', 'CleanStatus', 'PhotoUrl', 'OwnerId'];
-        console.log(myArray);
+        const myArray = ['IsDeleted','CreatedDate', 'CreatedById', 'LastModifiedDate', 'LastModifiedById', 'SystemModstamp', 'LastViewedDate', 'LastReferencedDate', 'CleanStatus', 'PhotoUrl', 'OwnerId'];
         this.objects = data.map(obj => ({ ...obj}));
+        this.idsList = this.objects.map(obj => obj.Id);
+
         this.objects = this.objects.map(field => {
           return Object.keys(field)
              .filter(key => !myArray.includes(key))
@@ -29,14 +30,13 @@ export default class DuplicateComponent extends LightningElement {
               return obj;
             }, {});
         });
-        this.idsList = this.objects.map(obj => obj.Id);
-
         this.fields = Object.keys(data[0]);
         this.fields = this.fields.filter(field => !myArray.includes(field));
+        this.fields = this.fields.filter(field => field != 'Id');
 
         this.selectedFields = this.fields.map(field => ({ fieldName: field, isSelected: false, value: "" })); 
       } else if (error) {
-        console.error(error);
+        console.error('dfsdfds',error);
       }
     }
 
@@ -62,11 +62,10 @@ export default class DuplicateComponent extends LightningElement {
 
     
     handleCheckboxChange(event) {
-      this.initializeSelectedFieldsList();
       
       const fieldFromPage = event.target.dataset.field;
       const objectId = event.target.dataset.objectId;
-      const foundObjectValue = this.objects.find(object => object.Id == objectId);
+      const foundObjectValue = this.objects.find(object => object.Id === objectId);
       const indexToUpdate = this.selectedFields.findIndex(item => item.fieldName === fieldFromPage);
 
       if (event.target.checked) {
@@ -85,13 +84,6 @@ export default class DuplicateComponent extends LightningElement {
           this.selectedFields[indexToUpdate].value = "";
         }
       }
-      console.log(JSON.stringify(this.selectedFields, (key, value) => {
-        if (Array.isArray(value)) {
-          return [...value];
-        } else {
-          return value;
-        }
-      }));
     }
     
   handleMergeClick() {
