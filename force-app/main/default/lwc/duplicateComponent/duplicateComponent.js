@@ -1,5 +1,5 @@
 import { LightningElement, api, track, wire } from 'lwc';
-import findDuplicates from '@salesforce/apex/DuplicateController.findDuplicates';
+import getInitDuplicateRecordSetList from '@salesforce/apex/DuplicateController.getInitDuplicateRecordSetList';
 import mergeObject from '@salesforce/apex/DuplicateController.mergeObject';
 
 export default class DuplicateComponent extends LightningElement {
@@ -17,7 +17,7 @@ export default class DuplicateComponent extends LightningElement {
     @track selectedFields = null;
     @track idsList = [];
 
-    @wire(findDuplicates, { idFromPage: '$recordId' })
+    @wire(getInitDuplicateRecordSetList, { idFromPage: '$recordId' })
     wiredDuplicates({ error, data }) {
       if (data && data.length > 0) {
         this.objects = data.map(obj => ({ ...obj}));
