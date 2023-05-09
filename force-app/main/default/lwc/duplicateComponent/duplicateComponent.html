@@ -1,0 +1,69 @@
+<template>
+  <template if:true={duplicatesToShow}>
+    <div>
+      <table class="slds-table slds-table_bordered slds-table_cell-buffer slds-table_col-bordered">
+        <thead>
+          <tr class="slds-text-title_caps">
+            <th scope="col" class="slds-cell-wrap">Field Name</th>
+            <template for:each={objects} for:item="object">
+              <th key={object.Id} scope="col" class="slds-cell-wrap">
+                <input type="checkbox" name="selectedObjects" onchange={handleChooseObjectChange} data-object-id={object.Id} />
+                {object.Name}
+              </th>
+            </template>
+          </tr>
+        </thead>
+        <tbody>
+          <template for:each={fields} for:item="field">
+            <tr key={field}>
+              <th scope="row" class="slds-cell-wrap">{field}</th>
+              <template for:each={objects} for:item="object">
+                <td key={object.Id} class="slds-cell-wrap">
+                  <c-object-td object={object} field={field}></c-object-td>
+                </td>
+              </template>
+            </tr>
+          </template>
+        </tbody>
+      </table>
+    </div>
+    <div class="slds-text-align_right slds-m-top_medium">
+      <lightning-button label="Merge duplicate" onclick={openModal}></lightning-button>
+
+      <template if:true={showModal}>
+        <div class="slds-modal slds-fade-in-open">
+          <div class="slds-modal__container">
+            <div class="slds-modal__header">
+              <h2 class="slds-text-heading_medium">Duplicate Records</h2>
+              <button class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse" title="Close" onclick={closeModal}>
+                <lightning-icon icon-name="utility:close" size="small"></lightning-icon>
+              </button>
+            </div>
+            <div class="slds-modal__content slds-p-around_medium">
+              <table class="slds-table slds-table_bordered slds-table_cell-buffer slds-table_col-bordered">
+                <tbody>
+                  <template for:each={fields} for:item="field">
+                    <tr key={field}>
+                      <th scope="row" class="slds-cell-wrap">{field}</th>
+                      <template for:each={objectsForModal} for:item="object">
+                        <td key={object.Id} class="slds-cell-wrap">
+                          <input type="checkbox" name="selectedObjects" checked={object.isSelected} onchange={handleCheckboxChange} data-field={field} data-object-id={object.Id} />
+                          <c-object-td object={object} field={field}></c-object-td>
+                        </td>
+                      </template>
+                    </tr>
+                  </template>
+                </tbody>
+              </table>
+              <lightning-button variant="brand" label="Merge" onclick={handleMergeClick}></lightning-button>
+            </div>
+          </div>
+        </div>
+        <div class="slds-backdrop slds-backdrop_open"></div>
+      </template>
+    </div>
+  </template>
+  <template if:false={duplicatesToShow}>
+    <div class="slds-align_absolute-center slds-scrollable_y">No duplicates available</div>
+  </template>
+</template>
