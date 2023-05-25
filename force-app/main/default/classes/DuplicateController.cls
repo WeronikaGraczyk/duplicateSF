@@ -51,13 +51,15 @@ public with sharing class DuplicateController {
     }
 
     public static void insertObject(List<ObjectFieldWrapper> objectFields, String objName) {
-        SObject newObject = (SObject) Type.forName('Schema.' + objName).newInstance();
-        for (ObjectFieldWrapper objecty : objectFields) {
-            if(String.valueOf(objecty.value) != '' && String.valueOf(objecty.value) != null){
-               newObject.put(String.valueOf(objecty.fieldName),  String.valueOf(objecty.value)); 
-            }
+        if(objectFields!= null){
+            SObject newObject = (SObject) Type.forName('Schema.' + objName).newInstance();
+            for (ObjectFieldWrapper objecty : objectFields) {
+                if(String.valueOf(objecty.value) != '' && String.valueOf(objecty.value) != null){
+                newObject.put(String.valueOf(objecty.fieldName),  String.valueOf(objecty.value)); 
+                }
+            }   
+            Database.insert(newObject, true);
         }
-        Database.insert(newObject, true);
     }
     
     public static void deleteObjects(List<Id> idsList, String objectName) {
