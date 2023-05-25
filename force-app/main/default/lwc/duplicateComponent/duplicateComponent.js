@@ -46,10 +46,11 @@ export default class DuplicateComponent extends LightningElement {
   }
 
   openModal() {
-    this.selectedObject = null;
-    this.showModal = true;
+    if (this.idsList.length > 1) {
+      this.selectedObject = null;
+      this.showModal = true;
+    }
   }
-
   closeModal() {
     this.showModal = false;
   }
@@ -102,16 +103,9 @@ export default class DuplicateComponent extends LightningElement {
   }
     
   handleMergeClick() {
-  this.selectedFields = this.selectedFields.filter(field => field.fieldName !== 'Id');
-
-  const selectedFieldsJSON = JSON.stringify(this.selectedFields);
-  mergeObject({selectedFieldsJSON: selectedFieldsJSON, idsList: this.idsList})
-    .then(result => {
-      console.log(result);
-    })
-    .catch(error => {
-      console.error(error);
-    });
+    this.selectedFields = this.selectedFields.filter(field => field.fieldName !== 'Id');
+    const selectedFieldsJSON = JSON.stringify(this.selectedFields);
+    mergeObject({selectedFieldsJSON: selectedFieldsJSON, idsList: this.idsList});
     this.showModal = false;
   }
 }
